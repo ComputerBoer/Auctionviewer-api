@@ -28,13 +28,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.py" />
-    <Compile Include="config.py" />
+    <Compile Include="utils\auctionutils.py" />
+    <Compile Include="cache.py" />
+    <Compile Include="utils\locationutils.py" />
+    <Compile Include="models\auction.py" />
+    <Compile Include="models\location.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.6-32" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="data\locationfiles\NL.txt" />
+    <Content Include="data\locationfiles\readme.txt" />
     <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\locationfiles\" />
+    <Folder Include="models\" />
+    <Folder Include="data\" />
+    <Folder Include="utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
