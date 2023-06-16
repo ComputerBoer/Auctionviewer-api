@@ -16,8 +16,25 @@ application = app # our hosting requires application in passenger_wsgi
 def gethome():
     return "application is working!"
 
+@app.route("/v2/auction/<countrycode>")
+def get(countrycode):
+    try:
+        if countrycode not in ['NL', 'BE', 'DE']:
+            print(f'country not available: {countrycode} ')
+            return jsonify('NOT AVAILABLE COUNTRY')
 
-@app.route("/auction/<countrycode>")
+
+        res = getAuctionlocations(countrycode)
+        #return json.dumps(res, sort_keys=True, default=str)
+        return JsonEncoder().encode(res)
+
+    except Exception as e:
+        print('something went wrong ')
+        print_exc(e)
+        return 'internal server error', 500
+
+
+@app.route("/v1/auction/<countrycode>")
 def get(countrycode):
     try:
         if countrycode not in ['NL', 'BE', 'DE']:
