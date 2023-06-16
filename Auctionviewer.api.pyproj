@@ -31,7 +31,6 @@
     <Compile Include="utils\auctionutils.py" />
     <Compile Include="cache.py" />
     <Compile Include="utils\locationutils.py" />
-    <Compile Include="models\auction.py" />
     <Compile Include="models\location.py" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,4 @@
 from enum import Enum
-import numbers
-import string
-import json
 from json import JSONEncoder
 
 class Countrycode(Enum):

@@ -3,3 +3,4 @@ setuptools==28.8.0
 flask===2.0.3
 flask_cors===3.0.10
 requests===2.27.1
+pathlib===1.0.1
