@@ -84,7 +84,9 @@ def getOVMAuctions():
         for result in data['veilingen']:
               cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
               cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
-              a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],result['openingsDatumISO'], result['sluitingsDatumISO'], str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
+              startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
+              enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
+              a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
               auctions.append(a)
         Cache.add(cachename, auctions)
         return auctions
