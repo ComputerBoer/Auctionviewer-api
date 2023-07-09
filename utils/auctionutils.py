@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import requests
 from cache import Cache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation
@@ -10,7 +11,10 @@ def getAuctionlocations(countrycode: Countrycode):
     res = Cache.get(cachename)
     if(res): return res
     
-    auctions = getTwkAuctions(countrycode)
+
+    twkauctions = getTwkAuctions(countrycode)
+    ovmauctions = getOVMAuctions() 
+    auctions = [*twkauctions, *ovmauctions]
 
     for auction in auctions:
         auction.geonamelocation = getGeoLocationByCity(auction.city, countrycode)
@@ -47,10 +51,10 @@ def get_geonameid(auction):
 
 def getTwkAuctions(countrycode):
     cachename = 'TwkAuctions_'+ countrycode
-    response = requests.get("https://api.troostwijkauctions.com/sale/4/listgrouped?batchSize=99999&CountryIDs=" + countrycode)
-
     res = Cache.get(cachename)
     if(res):return res
+
+    response = requests.get("https://api.troostwijkauctions.com/sale/4/listgrouped?batchSize=99999&CountryIDs=" + countrycode)
 
     if(response.status_code ==200):
         print('Got Twk Auctions')
@@ -62,5 +66,24 @@ def getTwkAuctions(countrycode):
                 auctions.append(a)
         Cache.add(cachename, auctions)
 
+        return auctions
+    return None
+
+def getOVMAuctions():
+    cachename = 'OnlineVeiling_'
+    res = Cache.get(cachename)
+    if(res):return res
+
+    response = requests.get("https://onlineveilingmeester.nl/rest/nl/veilingen?status=open&domein=ONLINEVEILINGMEESTER")
+
+    if(response.status_code ==200):
+        data = response.json()
+        auctions = []
+        for result in data['veilingen']:
+              cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
+              cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
+              a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],result['openingsDatumISO'], result['sluitingsDatumISO'], str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
+              auctions.append(a)
+        Cache.add(cachename, auctions)
         return auctions
     return None

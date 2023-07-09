@@ -13,7 +13,7 @@
     <Name>Auctionviewer.api</Name>
     <RootNamespace>PythonAuctionviewer</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
-    <InterpreterId>Global|PythonCore|3.6-32</InterpreterId>
+    <InterpreterId>MSBuild|virtEnv_1|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>True</EnableNativeCodeDebugging>
     <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
@@ -46,6 +46,17 @@
     <Folder Include="models\" />
     <Folder Include="data\" />
     <Folder Include="utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="virtEnv_1\">
+      <Id>virtEnv_1</Id>
+      <Version>3.11</Version>
+      <Description>virtEnv_1 (Python 3.11 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

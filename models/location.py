@@ -9,6 +9,7 @@ class Countrycode(Enum):
 class Auctionbrand(str, Enum):
     NONE = "NONE",
     TWK = "TWK"
+    OVM = "OVM"
 
 
 class GeonameLocation:
