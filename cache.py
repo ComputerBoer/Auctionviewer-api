@@ -13,11 +13,11 @@ class Cache():
                print('removing cacheobject ' + key)
                del cache[key]
                return None
-           #print('returning cacheobject ' + key)
+           print(str(datetime.now()) + ' returning cacheobject ' + key)
            return cacheobj.obj
 
     def add(key, obj):
-        print('adding cacheobject ' + key)
+        print(str(datetime.now()) + ' adding cacheobject ' + key)
         cacheobj = CacheObj(key, obj)
         cache[key] = cacheobj
 

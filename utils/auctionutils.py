@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 import requests
 from cache import Cache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation
@@ -9,9 +8,9 @@ def getAuctionlocations(countrycode: Countrycode):
     cachename = 'allauctions_' + countrycode
 
     res = Cache.get(cachename)
-    if(res): return res
+    if(res): 
+      return res
     
-
     twkauctions = getTwkAuctions(countrycode)
     ovmauctions = getOVMAuctions() 
     auctions = [*twkauctions, *ovmauctions]
@@ -52,7 +51,8 @@ def get_geonameid(auction):
 def getTwkAuctions(countrycode):
     cachename = 'TwkAuctions_'+ countrycode
     res = Cache.get(cachename)
-    if(res):return res
+    if(res):
+      return res
 
     response = requests.get("https://api.troostwijkauctions.com/sale/4/listgrouped?batchSize=99999&CountryIDs=" + countrycode)
 
@@ -72,11 +72,13 @@ def getTwkAuctions(countrycode):
 def getOVMAuctions():
     cachename = 'OnlineVeiling_'
     res = Cache.get(cachename)
-    if(res):return res
+    if(res):
+      return res
 
     response = requests.get("https://onlineveilingmeester.nl/rest/nl/veilingen?status=open&domein=ONLINEVEILINGMEESTER")
 
     if(response.status_code ==200):
+        print('Got Ovm Auctions')
         data = response.json()
         auctions = []
         for result in data['veilingen']:
