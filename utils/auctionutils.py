@@ -1,8 +1,11 @@
+from distutils.command import build
 import requests
 from cache import Cache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation
 from utils.locationutils import getGeoLocationByCity
 from datetime import datetime
+import re
+import math
 
 def getAuctionlocations(countrycode: Countrycode):
     cachename = 'allauctions_' + countrycode
@@ -47,6 +50,20 @@ def get_geonameid(auction):
         return auction.geonamelocation.geonameid
     return None
 
+# global twkDataUrl; # = ''; #  'https://www.troostwijkauctions.com/_next/data/' #e6-N0pLHv12LVGS0oYzx6/nl/'
+
+
+def getTWKUrl():
+    response = requests.get('https://www.troostwijkauctions.com/')
+    if(response.status_code ==200):
+      buildid = re.search(r'"buildId":"([^"]*)', response.text, re.MULTILINE )
+      twkDataUrl = 'https://www.troostwijkauctions.com/_next/data/' + str(buildid[1]) + '/nl/'
+      print('buildid: ' + str(buildid[1]))
+      print('twkDataUrl: ' + twkDataUrl)
+      return twkDataUrl
+
+    return None
+
 
 def getTwkAuctions(countrycode):
     cachename = 'TwkAuctions_'+ countrycode
@@ -54,19 +71,55 @@ def getTwkAuctions(countrycode):
     if(res):
       return res
 
-    response = requests.get("https://api.troostwijkauctions.com/sale/4/listgrouped?batchSize=99999&CountryIDs=" + countrycode)
+    # buildidresponse = requests.get('https://www.troostwijkauctions.com/')
+    twkDataUrl = getTWKUrl();
+
+    if(twkDataUrl is None):
+        return [];
+
+    response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode)
 
     if(response.status_code ==200):
         print('Got Twk Auctions')
         data = response.json();
-        auctions = []
-        for result in data['results']:
-            for twka in result['items']:
-                a = Auction(Auctionbrand.TWK, twka['c'], twka['cc'], twka['n'], datetime.fromtimestamp(twka['sd']), datetime.fromtimestamp(twka['cd']), twka['url'], twka['ii'], twka['nol'] )
-                auctions.append(a)
+        auctions = [];
+        
+        totalAuctionCount = data['pageProps']['auctionList']['totalSize'];
+        pages = math.ceil(totalAuctionCount / len(data['pageProps']['auctionList']['results']))
+        # for result in data['pageProps']['auctionList']:
+        
+        for i in range(1,pages,1):
+          print("getting page " + str(i) + ' of ' + str(pages))
+          if(i > 1):
+              response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode + "&page=" + str(i));
+              data = response.json();
+          
+          for twka in data['pageProps']['auctionList']['results']:
+            # print(twka['urlSlug'])
+            auction = getTWKAuction(twkDataUrl, twka['urlSlug'])
+            if(auction):
+              auctions.append(auction)
         Cache.add(cachename, auctions)
 
         return auctions
+    return []
+
+def getTWKAuction(twkDataUrl, auctionurlslug):
+    response = requests.get(twkDataUrl + "a/" + auctionurlslug + '.json')
+    if(response.status_code ==200):
+        data = response.json();
+        if(len(data['pageProps']['lots']['results']) ==0):
+          return None;
+    
+        twka = data['pageProps']['auction'];
+        firstlot = data['pageProps']['lots']['results'][0]
+        city = "Nederland" if  firstlot['location']['city'].lower() == 'online' else firstlot['location']['city']
+        # if(firstlot['location']['city'].lower() != 'online'):
+        #   city = firstlot['location']['city'];
+        a = Auction(Auctionbrand.TWK, city, firstlot['location']['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + auctionurlslug, twka['image']['url'], twka['lotCount'] )
+        # print(a);
+        return a;
+
     return None
 
 def getOVMAuctions():

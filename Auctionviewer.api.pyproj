@@ -27,6 +27,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="runapi.py" />
     <Compile Include="app.py" />
     <Compile Include="utils\auctionutils.py" />
     <Compile Include="cache.py" />

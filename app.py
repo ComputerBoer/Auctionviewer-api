@@ -32,31 +32,6 @@ def getAllAuctions(countrycode):
         print_exc(e)
         return 'internal server error', 500
 
-
-@app.route("/auction/<countrycode>")
-def getTwkAuctions(countrycode):
-    try:
-        if countrycode not in ['NL', 'BE', 'DE']:
-            print(f'country not available: {countrycode} ')
-            return jsonify('NOT AVAILABLE COUNTRY')
-
-        res = Cache.get(countrycode)
-        if(res):
-            return res.obj
-
-        response = requests.get("https://api.troostwijkauctions.com/sale/4/listgrouped?batchSize=99999&CountryIDs=" + countrycode)
-        print(f'request statuscode: {response.status_code} ')
-
-        if(response.status_code ==200):
-            Cache.add(countrycode, response.json())
-
-        return response.json();
-
-    except Exception as e:
-        print('something went wrong ')
-        print_exc(e)
-        return 'internal server error', 500
-
 if __name__ == "__main__":
     app.run()  # run our Flask app
 
