@@ -1,6 +1,6 @@
 from distutils.command import build
 import requests
-from cache import Cache
+from cache import Cache, FileCache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation
 from utils.locationutils import getGeoLocationByCity
 from datetime import datetime
@@ -10,7 +10,9 @@ import math
 def getAuctionlocations(countrycode: Countrycode):
     cachename = 'allauctions_' + countrycode
 
-    res = Cache.get(cachename)
+    res = FileCache.get(cachename, 23)
+
+    # res = Cache.get(cachename)
     if(res): 
       return res
     
@@ -42,7 +44,7 @@ def getAuctionlocations(countrycode: Countrycode):
         for auction in location.auctions:
             del auction.geonamelocation #removes object to not have duplicate data send to the server
 
-    Cache.add(cachename, maplocations)
+    FileCache.add(cachename, maplocations)
     return maplocations
 
 def get_geonameid(auction):

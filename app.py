@@ -19,7 +19,7 @@ def gethome():
 def getAllAuctions(countrycode):
     try:
         if countrycode not in ['NL', 'BE', 'DE']:
-            print(f'country not available: {countrycode} ')
+            print('country not available: ' + countrycode)
             return jsonify('NOT AVAILABLE COUNTRY')
 
 

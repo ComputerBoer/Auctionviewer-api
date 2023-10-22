@@ -46,6 +46,7 @@
     <Folder Include="data\locationfiles\" />
     <Folder Include="models\" />
     <Folder Include="data\" />
+    <Folder Include="filecache\" />
     <Folder Include="utils\" />
   </ItemGroup>
   <ItemGroup>
