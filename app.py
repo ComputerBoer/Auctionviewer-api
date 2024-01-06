@@ -1,3 +1,4 @@
+from utils.helperutils import log
 from traceback import print_exc
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
@@ -19,16 +20,16 @@ def gethome():
 def getAllAuctions(countrycode):
     try:
         if countrycode not in ['NL', 'BE', 'DE']:
-            print('country not available: ' + countrycode)
+            log('country not available: ' + countrycode)
             return jsonify('NOT AVAILABLE COUNTRY')
 
-
+        log('incoming api request')
         res = getAuctionlocations(countrycode)
         #return json.dumps(res, sort_keys=True, default=str)
         return JsonEncoder().encode(res)
 
     except Exception as e:
-        print('something went wrong ')
+        log('something went wrong ')
         print_exc(e)
         return 'internal server error', 500
 

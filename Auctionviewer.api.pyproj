@@ -31,6 +31,7 @@
     <Compile Include="app.py" />
     <Compile Include="utils\auctionutils.py" />
     <Compile Include="cache.py" />
+    <Compile Include="utils\helperutils.py" />
     <Compile Include="utils\locationutils.py" />
     <Compile Include="models\location.py" />
   </ItemGroup>

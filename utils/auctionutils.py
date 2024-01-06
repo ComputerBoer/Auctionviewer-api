@@ -1,8 +1,9 @@
-from distutils.command import build
+import imp
 import requests
 from cache import Cache, FileCache
-from models.location import Auction, Auctionbrand, Countrycode, Maplocation
+from models.location import Auction, Auctionbrand, Countrycode, Maplocation, JsonEncoder
 from utils.locationutils import getGeoLocationByCity
+from utils.helperutils import log
 from datetime import datetime
 import re
 import math
@@ -60,8 +61,8 @@ def getTWKUrl():
     if(response.status_code ==200):
       buildid = re.search(r'"buildId":"([^"]*)', response.text, re.MULTILINE )
       twkDataUrl = 'https://www.troostwijkauctions.com/_next/data/' + str(buildid[1]) + '/nl/'
-      print('buildid: ' + str(buildid[1]))
-      print('twkDataUrl: ' + twkDataUrl)
+      log('buildid: ' + str(buildid[1]))
+      log('twkDataUrl: ' + twkDataUrl)
       return twkDataUrl
 
     return None
@@ -82,7 +83,7 @@ def getTwkAuctions(countrycode):
     response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode)
 
     if(response.status_code ==200):
-        print('Got Twk Auctions')
+        log('Got Twk Auctions')
         data = response.json();
         auctions = [];
         
@@ -91,7 +92,7 @@ def getTwkAuctions(countrycode):
         # for result in data['pageProps']['auctionList']:
         
         for i in range(1,pages,1):
-          print("getting page " + str(i) + ' of ' + str(pages))
+          log("getting page " + str(i) + ' of ' + str(pages))
           if(i > 1):
               response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode + "&page=" + str(i));
               data = response.json();
@@ -108,7 +109,7 @@ def getTwkAuctions(countrycode):
 
 def getTWKAuction(twkDataUrl, auctionurlslug):
     response = requests.get(twkDataUrl + "a/" + auctionurlslug + '.json')
-    if(response.status_code ==200):
+    if(response.status_code == 200):
         data = response.json();
         if(len(data['pageProps']['lots']['results']) ==0):
           return None;
@@ -130,19 +131,31 @@ def getOVMAuctions():
     if(res):
       return res
 
-    response = requests.get("https://onlineveilingmeester.nl/rest/nl/veilingen?status=open&domein=ONLINEVEILINGMEESTER")
+    try:
+      response = requests.get("https://onlineveilingmeester.nl/rest/nl/veilingen?status=open&domein=ONLINEVEILINGMEESTER")
+    except:
+        log("The OVM auctions call threw a error")
 
+    if(response is None):
+       return None
+      
     if(response.status_code ==200):
-        print('Got Ovm Auctions')
-        data = response.json()
-        auctions = []
-        for result in data['veilingen']:
-              cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
-              cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
-              startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
-              enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
-              a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
-              auctions.append(a)
-        Cache.add(cachename, auctions)
-        return auctions
+        log('Got Ovm Auctions')
+        try:
+           data = response.json()
+           auctions = []
+           for result in data['veilingen']:
+                 cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
+                 cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
+                 startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
+                 enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
+                 a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
+                 auctions.append(a)
+           Cache.add(cachename, auctions)
+           return auctions
+        except:
+           log('Something went wrong in the mapping of OVM auctions to auctionviewer objects. The reason was: ' + response.reason  + '. The response was: ' + JsonEncoder().encode(response.json()))
+           
+    else:
+       log("The OVM auctions call didn't gave a 200 response but a " + str(response.status_code) + ". With the reason: " + response.reason)
     return None
