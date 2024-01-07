@@ -20,7 +20,7 @@ class Cache():
                log('removing cacheobject ' + key)
                del cache[key]
                return None
-           log( 'returning cacheobject ' + key)
+           # log( 'returning cacheobject ' + key)
            return cacheobj.obj
 
     def add(key, obj):
@@ -36,7 +36,7 @@ class CacheObj:
         self.time=datetime.now()
     
     def isOlderThanHours(self, hours):
-        log('checking time cacheobject ' + self.key + ': ' + str(self.time) + " < " + str(datetime.now() - timedelta(hours=hours)))
+        # log('checking time cacheobject ' + self.key + ': ' + str(self.time) + " < " + str(datetime.now() - timedelta(hours=hours)))
         return self.time < datetime.now() - timedelta(hours=hours)
   
       

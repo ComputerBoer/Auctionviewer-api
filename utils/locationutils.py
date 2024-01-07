@@ -1,9 +1,9 @@
 import re
 import os
 from pathlib import Path
-from cache import Cache
-from models.location import Countrycode, GeonameLocation
-
+from cache import Cache, FileCache
+from models.location import Countrycode, GeonameLocation, JsonEncoder
+from utils.helperutils import log;
 
 def getLocationArray(countrycode: Countrycode):
     cachename = 'locations_' + countrycode
@@ -23,26 +23,29 @@ def getLocationArray(countrycode: Countrycode):
             data = line.split("\t")
             alternatenames = []
             if data[3] != "":
-                alternatenames = data[3].lower().split(",") 
-            geoname = GeonameLocation(data[0], data[1].lower(), data[2].lower(), alternatenames, data[4], data[5], data[8], data[18])
+                alternatenames = [d.strip() for d in data[3].lower().split(",")] #makes from comma seperated a lowercase array and strips leading and trailing white spaces 
+            geoname = GeonameLocation(data[0], data[1].strip().lower(), data[2].strip().lower(), alternatenames, data[4], data[5], data[8], data[18])
             geonames.append(geoname)
 
         Cache.add(cachename,geonames)
+
         return geonames
 
 def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
-    city = city.lower();
+    city = city.strip().lower(); #strips leading and trailing white spaces and makes it lowercase
 
     cityname = city
     if(not "gemeente" in cityname):
-        cityname = "gemeente "+ cityname
+        cityname = "gemeente " + cityname
 
     geonames = getLocationArray(countrycode)
+
+    # log('cityname and city: ' + cityname + " , " + city)
 
     #first tries name with 'gemeente as prefix'
     geo = list(filter(lambda g: g.name == cityname, geonames))
     if(geo): geo = geo[0]
-    #print('first try' + repr(geo))
+    # print('first try' + repr(geo))
     if (geo): return geo;
     #also tries in the alternatenames
     geo = list(filter(lambda g: inAlternatenames(g.alternatenames, cityname), geonames))
@@ -63,11 +66,11 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
 
     #removes everything between () and then removes the leading and trailing spaces;
     
-    print('name before regex ' + city)
+    log('name before regex ' + city)
     #city = re.sub('/\([^()]*\)/g', '', city)
     city = re.sub("[\(].*?[\)]", "", city)
     city = city.strip();
-    print('name after regex ' + city)
+    log('name after regex ' + city)
 
     geo = list(filter(lambda g: g.name == city, geonames))
     if(geo): geo = geo[0]
