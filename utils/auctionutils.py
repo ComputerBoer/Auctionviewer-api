@@ -1,5 +1,6 @@
 import imp
 import requests
+from traceback import print_exc
 from cache import Cache, FileCache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation, JsonEncoder
 from utils.locationutils import getGeoLocationByCity
@@ -18,7 +19,9 @@ def getAuctionlocations(countrycode: Countrycode):
       return res
     
     twkauctions = getTwkAuctions(countrycode)
+    
     ovmauctions = getOVMAuctions() 
+    
     auctions = [*twkauctions, *ovmauctions]
 
     for auction in auctions:
@@ -137,7 +140,7 @@ def getOVMAuctions():
         log("The OVM auctions call threw a error")
 
     if(response is None):
-       return None
+       return []
       
     if(response.status_code ==200):
         log('Got Ovm Auctions')
@@ -145,17 +148,19 @@ def getOVMAuctions():
            data = response.json()
            auctions = []
            for result in data['veilingen']:
-                 cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
-                 cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
-                 startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
-                 enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
-                 a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + result['image'], result['totaalKavels'] )
-                 auctions.append(a)
+               cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
+               cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
+               startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
+               enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
+               image = "" if result['image'] else image
+               a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + str(result['id']) + '/' + image, result['totaalKavels'] )
+               auctions.append(a)
            Cache.add(cachename, auctions)
            return auctions
-        except:
+        except Exception as e:
            log('Something went wrong in the mapping of OVM auctions to auctionviewer objects. The reason was: ' + response.reason  + '. The response was: ' + JsonEncoder().encode(response.json()))
-           
+           print_exc(e)
+        
     else:
        log("The OVM auctions call didn't gave a 200 response but a " + str(response.status_code) + ". With the reason: " + response.reason)
-    return None
+    return []
