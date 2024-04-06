@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /virtEnv_1
 /filecache
-/Apr-2024.api.auctionviewer.tar.gz
+*.tar.gz
