@@ -164,7 +164,8 @@ def getOVMAuctions():
                cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
                startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
                enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
-               image = "" if result['imageList'][0] else image
+               firstimage = result['imageList'][0]
+               image = firstimage if firstimage else ""
                a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + image, result['totaalKavels'] )
                auctions.append(a)
            Cache.add(cachename, auctions)
