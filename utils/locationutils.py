@@ -84,7 +84,7 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
     #print('alternatenames without ()'+ repr( geo))
     if (geo): return geo;
 
-    print('city not found: '+ city)
+    log('city not found: '+ city)
     return None;
 
 def inAlternatenames(alternatenames = [], name = ""):
