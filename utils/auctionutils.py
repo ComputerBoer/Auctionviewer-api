@@ -131,7 +131,7 @@ def getTWKAuction(twkDataUrl, auctionurlslug):
     
         twka = data['pageProps']['auction'];
         firstlot = data['pageProps']['lots']['results'][0]
-        city = "Nederland" if  firstlot['location']['city'].lower() == 'online' else firstlot['location']['city']
+        city = "Nederland" if  firstlot['location']['city'].lower() == 'online' or firstlot['location']['city'].lower() == "free delivery" else firstlot['location']['city']
         # if(firstlot['location']['city'].lower() != 'online'):
         #   city = firstlot['location']['city'];
         a = Auction(Auctionbrand.TWK, city, firstlot['location']['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + auctionurlslug, twka['image']['url'], twka['lotCount'] )
