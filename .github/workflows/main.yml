@@ -28,8 +28,3 @@ jobs:
         #local-dir: ./PythonAuctionviewer/ #uses default ./
         server-dir: ${{ vars.FTP_PYTHON_API_DIRECTORY }}
         #dangerous-clean-slate: true
-        exclude: |
-          **./.git*
-          **./.git*/**
-          **./node_modules/**
-          **./env/**
