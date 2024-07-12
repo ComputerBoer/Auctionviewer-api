@@ -39,11 +39,15 @@
     <InterpreterReference Include="Global|PythonCore|3.6-32" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".github\workflows\main.yml" />
+    <Content Include=".gitignore" />
     <Content Include="data\locationfiles\NL.txt" />
     <Content Include="data\locationfiles\readme.txt" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".github\" />
+    <Folder Include=".github\workflows\" />
     <Folder Include="data\locationfiles\" />
     <Folder Include="models\" />
     <Folder Include="data\" />
