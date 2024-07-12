@@ -14,7 +14,6 @@ def getAuctionlocations(countrycode: Countrycode):
 
     res = FileCache.get(cachename, 23)
 
-    # res = Cache.get(cachename)
     if(res): 
       return res
     
@@ -89,7 +88,6 @@ def getTwkAuctions(countrycode):
     if(res):
       return res
 
-    # buildidresponse = requests.get('https://www.troostwijkauctions.com/')
     twkDataUrl = getTWKUrl();
 
     if(twkDataUrl is None):
@@ -132,10 +130,7 @@ def getTWKAuction(twkDataUrl, auctionurlslug):
         twka = data['pageProps']['auction'];
         firstlot = data['pageProps']['lots']['results'][0]
         city = "Nederland" if  firstlot['location']['city'].lower() == 'online' or firstlot['location']['city'].lower() == "free delivery" else firstlot['location']['city']
-        # if(firstlot['location']['city'].lower() != 'online'):
-        #   city = firstlot['location']['city'];
         a = Auction(Auctionbrand.TWK, city, firstlot['location']['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + auctionurlslug, twka['image']['url'], twka['lotCount'] )
-        # print(a);
         return a;
 
     return None
@@ -165,8 +160,7 @@ def getOVMAuctions():
                startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
                enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
                image = "";
-               #if hasattr(result, 'image') : #result['image'] :
-               image = result.get('image', "")  #['image']
+               image = result.get('image', "")
                if image == "":
                   image = result.get('imageList', [""])[0]
                
