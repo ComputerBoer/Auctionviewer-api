@@ -26,7 +26,7 @@ jobs:
         username: ${{ secrets.FTP_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./PythonAuctionviewer/
-        server-dir: ${{ variables.FTP_PYTHON_API_DIRECTORY }}
+        server-dir: ${{ env.FTP_PYTHON_API_DIRECTORY }}
         #dangerous-clean-slate: true
 
 
