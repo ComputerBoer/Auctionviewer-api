@@ -1,4 +1,4 @@
-name: Ik ben Henk angular ftp deploy
+name: Ik ben Henk python api ftp deploy
 
 on:
   push:
@@ -26,7 +26,5 @@ jobs:
         username: ${{ secrets.FTP_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./PythonAuctionviewer/
-        server-dir: ${{ env.FTP_PYTHON_API_DIRECTORY }}
+        server-dir: ${{ vars.FTP_PYTHON_API_DIRECTORY }}
         #dangerous-clean-slate: true
-
-
