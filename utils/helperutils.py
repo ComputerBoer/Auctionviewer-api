@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 def log(value):
-   print(str(datetime.now()) + ' ' + value)
+    print(str(datetime.now()) + ' ' + value)
     # try: 
     #    print(str(datetime.now()) + ' ' + value.encode("utf-8"))
     # except:
