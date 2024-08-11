@@ -162,14 +162,18 @@ def getOVMAuctions():
                image = "";
                image = result.get('image', "")
                if image == "":
-                  image = result.get('imageList', [""])[0]
+                  images = result.get('imageList')
+                  if(len(images) >0):
+                     image = images[0];
+                  else:
+                     log("No image found for OVM auction: " + result['naam'])
                
                a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + image, result['totaalKavels'] )
                auctions.append(a)
            Cache.add(cachename, auctions)
            return auctions
         except Exception as e:
-           log('Something went wrong in the mapping of OVM auctions to auctionviewer objects. The reason was: ' + response.reason  + '. The response was: ' + JsonEncoder().encode(response.json()))
+           log(e.__cause__ + '--  Something went wrong in the mapping of OVM auctions to auctionviewer objects. The reason was: ' + response.reason  + '. The response was: ' + JsonEncoder().encode(response.json()))
            print_exc(e)
         
     else:
