@@ -41,28 +41,31 @@ class CacheObj:
   
       
 class FileCache():
-  def get(key, notOlderThanHours = 24):
+  def get(key, notOlderThanHours = None):
       
       filepath = "./filecache/" + key + ".json"
       cachefile = Path(filepath)
       if cachefile.is_file():
         ti_m = os.path.getmtime(filepath)
-        #checks last modified age of file, and removes it if it is too old
-        log('checking time cachefile ' + filepath + ': ' + str(ti_m) + " < " + str(time.time() - (3600 * notOlderThanHours)))
-        if(ti_m < time.time() - (3600 * notOlderThanHours)):
-          log('removing old filecache')
-          os.remove(filepath);
-          return None;
+
+        if(notOlderThanHours is not None):
+            #checks last modified age of file, and removes it if it is too old
+            log('checking time cachefile ' + filepath + ': ' + str(ti_m) + " < " + str(time.time() - (3600 * notOlderThanHours)))
+
+            if( ti_m < time.time() - (3600 * notOlderThanHours)):
+                log('removing old filecache')
+                os.remove(filepath)
+                return None
         
         with open(filepath) as json_file:
-          json_data = json.load(json_file);
+          json_data = json.load(json_file)
           log('returning json data from cachefile: ' + key)
-          return json_data;
+          return json_data
         
       return None
 
   def add(key, obj):
-        log('adding filecacheobject ' + key);
+        log('adding filecacheobject ' + key)
         json_data = JsonEncoder().encode(obj)
         with open("./filecache/" + key + ".json", 'w') as f:
           f.write(json_data)

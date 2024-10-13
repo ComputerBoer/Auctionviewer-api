@@ -1,11 +1,9 @@
 from utils.helperutils import log
 from traceback import print_exc
 from flask import Flask, jsonify
-from flask_cors import CORS, cross_origin
-import requests
+from flask_cors import CORS
 from cache import Cache
-from utils.auctionutils import getTwkAuctions, getAuctionlocations
-from utils.locationutils import getGeoLocationByCity
+from utils.auctionutils import  getAuctionlocations
 from models.location import JsonEncoder
 
 app = Flask(__name__)

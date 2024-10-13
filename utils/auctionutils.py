@@ -8,10 +8,13 @@ from datetime import datetime
 import re
 import math
 
-def getAuctionlocations(countrycode: Countrycode):
+def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     cachename = 'allauctions_' + countrycode
 
-    res = FileCache.get(cachename, 23)
+    if(clearcache):
+        res = FileCache.get(cachename, 1)
+    else:
+       res = FileCache.get(cachename)
 
     if(res): 
       return res
