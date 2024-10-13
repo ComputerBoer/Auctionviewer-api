@@ -19,7 +19,7 @@ def getLocationArray(countrycode: Countrycode):
 
         geonames = []
         for line in f:
-            line = line.rstrip('\n');
+            line = line.rstrip('\n')
             data = line.split("\t")
             alternatenames = []
             if data[3] != "":
@@ -46,23 +46,23 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
     geo = list(filter(lambda g: g.name == cityname, geonames))
     if(geo): geo = geo[0]
     # print('first try' + repr(geo))
-    if (geo): return geo;
+    if (geo): return geo
     #also tries in the alternatenames
     geo = list(filter(lambda g: inAlternatenames(g.alternatenames, cityname), geonames))
     if(geo): geo = geo[0]
     #print('alternatenames'+ repr( geo))
-    if (geo): return geo;
+    if (geo): return geo
     
     #then tries name without 'gemeente as prefix'
     geo = list(filter(lambda g: g.name == city, geonames))
     if(geo): geo = geo[0]
     #print('without gemeente' + repr( geo))
-    if (geo): return geo;
+    if (geo): return geo
     #also tries in the alternatenames
     geo = list(filter(lambda g: inAlternatenames(g.alternatenames, city), geonames))
     if(geo): geo = geo[0]
     #print('alternatenames without gemeente' + repr( geo))
-    if (geo): return geo;
+    if (geo): return geo
 
     #removes everything between () and then removes the leading and trailing spaces;
     
@@ -75,17 +75,17 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
     geo = list(filter(lambda g: g.name == city, geonames))
     if(geo): geo = geo[0]
     #print('without anything between ()' + repr( geo))
-    if (geo): return geo;
+    if (geo): return geo
     
 
     #also tries in the alternatenames
     geo = list(filter(lambda g: inAlternatenames(g.alternatenames, city), geonames))
     if(geo): geo = geo[0]
     #print('alternatenames without ()'+ repr( geo))
-    if (geo): return geo;
+    if (geo): return geo
 
     print('city not found: '+ city)
-    return None;
+    return None
 
 def inAlternatenames(alternatenames = [], name = ""):
     return name in alternatenames

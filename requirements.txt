@@ -1,6 +1,7 @@
 pip==9.0.1
 setuptools==28.8.0
-flask===2.0.3
-flask_cors===3.0.10
+flask===3.0.3
+werkzeug==3.0.0
+flask_cors===5.0.0
 requests===2.27.1
 pathlib===1.0.1
