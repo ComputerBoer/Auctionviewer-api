@@ -363,8 +363,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /virtEnv_1
-/filecache
 /env
 /env_OLD
 /myenv
 *.tar.gz
+allauctions_NL.json
