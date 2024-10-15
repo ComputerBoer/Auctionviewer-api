@@ -11,6 +11,8 @@ import math
 def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     cachename = 'allauctions_' + countrycode
 
+    log("should clear chache with cachename: " + str(clearcache) + ", " + cachename)
+
     if(clearcache):
         res = FileCache.get(cachename, 1)
     else:
