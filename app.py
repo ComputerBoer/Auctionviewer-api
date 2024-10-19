@@ -31,6 +31,23 @@ def getAllAuctions(countrycode):
         print_exc(e)
         return 'internal server error', 500
 
+@app.route("/v2/refreshauction/<countrycode>")
+def refreshAllAuctions(countrycode):
+    try:
+        if countrycode not in ['NL', 'BE', 'DE']:
+            log('country not available: ' + countrycode)
+            return jsonify('NOT AVAILABLE COUNTRY')
+
+        res = getAuctionlocations(countrycode, True)
+        return JsonEncoder().encode(res)
+
+    except Exception as e:
+        log('something went wrong with refreshing the auctions')
+        print_exc(e)
+        return 'internal server error' + e, 500
+
+    
+
 if __name__ == "__main__":
     app.run()  # run our Flask app
 
