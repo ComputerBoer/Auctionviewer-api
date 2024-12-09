@@ -126,6 +126,7 @@ def getTwkAuctions(countrycode):
     return []
 
 def getTWKAuction(twkDataUrl, auctionurlslug):
+    log("getting TWK auctiondetails:" + twkDataUrl + "a/" + auctionurlslug + ".json")
     response = requests.get(twkDataUrl + "a/" + auctionurlslug + '.json')
     if(response.status_code == 200):
         data = response.json()
