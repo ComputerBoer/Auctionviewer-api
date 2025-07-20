@@ -67,5 +67,6 @@ class FileCache():
   def add(key, obj):
         log('adding filecacheobject ' + key)
         json_data = JsonEncoder().encode(obj)
+        # json_data = json.dumps(obj, cls=JsonEncoder, indent=2)
         with open("./filecache/" + key + ".json", 'w+') as f:
           f.write(json_data)

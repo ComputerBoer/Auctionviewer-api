@@ -465,6 +465,7 @@
 2743947	Zevenbergen	Zevenbergen	Zevenbergen,ze fen bei heng,zefenberugen,Зевенберген,ゼーフェンベルゲン,澤芬貝亨	51.645	4.60417	P	PPL	NL		06	1709			0		5	Europe/Amsterdam	2017-10-17
 2743948	Gemeente Zevenaar	Gemeente Zevenaar	Gemeente Zevenaar,Zevenaar	51.95376	6.07727	A	ADM2	NL		03	0299			44096		9	Europe/Amsterdam	2023-01-31
 2743949	Zevenaar	Zevenaar	Zevenar,Зевенар	51.93	6.07083	P	PPL	NL		03	0299			26063		12	Europe/Amsterdam	2017-10-17
+2743949	omgeving zevenaar	omgeving zevenaar	Zevenar,Зевенар	51.93	6.07083	P	PPL	NL		03	0299			26063		12	Europe/Amsterdam	2017-10-17
 2743950	Zeumersche Beek	Zeumersche Beek		52.16452	5.53953	H	STM	NL		03				0		5	Europe/Amsterdam	2011-04-19
 2743951	Zeumeren	Zeumeren		52.17256	5.60208	P	PPL	NL		03	0203			0		12	Europe/Amsterdam	2009-01-17
 2743952	Zetten	Zetten		51.92833	5.71389	P	PPL	NL		03	1734			2985		10	Europe/Amsterdam	2017-10-17
@@ -13230,6 +13231,7 @@
 2757247	Den Bramel	Den Bramel		52.12176	6.3111	S	CSTL	NL		03	1876			0		15	Europe/Amsterdam	2011-06-04
 2757248	Den Braam	Den Braam		52.1375	6.84028	P	PPL	NL		15	0158			0		38	Europe/Amsterdam	2007-06-03
 2757251	Den Bosch	Den Bosch		52.07795	6.13621	S	EST	NL		03	0213			0		13	Europe/Amsterdam	2011-06-04
+2757251	's hertogenbosch	's hertogenbosch		52.07795	6.13621	S	EST	NL		03	0213			0		13	Europe/Amsterdam	2011-06-04
 2757252	Polder Den Bommel	Polder Den Bommel		51.70597	4.28369	T	PLDR	NL		11				0		-2	Europe/Amsterdam	2011-04-19
 2757253	Den Bommel	Den Bommel	Bommel	51.71583	4.28472	P	PPL	NL		11	1924			0		-1	Europe/Amsterdam	2017-10-17
 2757254	Polder Den Bol	Polder Den Bol		51.71665	4.75829	T	PLDR	NL		06				0		-1	Europe/Amsterdam	2011-04-19

@@ -1,7 +1,7 @@
-pip==9.0.1
-setuptools==28.8.0
-flask===3.0.3
-werkzeug==3.0.0
-flask_cors===5.0.0
-requests===2.27.1
+pip>=23.3
+setuptools>=78.1.1
+flask===3.1.1
+werkzeug>=3.0.6
+flask_cors>=6.0.0
+requests>=2.32.4
 pathlib===1.0.1
