@@ -60,6 +60,7 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
         #filters all auctions for this geonameid
         geoauctions = list(filter(lambda a: get_geonameid(a) == geoid , auctions))
         if(geoauctions):
+            geoauctions = list({object_.url: object_ for object_ in geoauctions}.values())
             #gets the location (if it has any) for the geolocation
             location = geoauctions[0].geonamelocation
             if(location):
