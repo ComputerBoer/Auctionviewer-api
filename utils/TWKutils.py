@@ -51,27 +51,31 @@ def getTwkAuctions(countrycode):
           
           for twka in data['pageProps']['listData']:
             # print(twka['urlSlug'])
-            auction = getTWKAuction(twkDataUrl, twka['urlSlug'])
-            if(auction):
+            auctionlocations = getTWKAuction(twka)
+            for auction in auctionlocations:
               auctions.append(auction)
+
         Cache.add(cachename, auctions)
 
         return auctions
     return []
 
-def getTWKAuction(twkDataUrl, auctionurlslug):
-    log("getting TWK auctiondetails:" + twkDataUrl + "a/" + auctionurlslug + ".json")
-    response = requests.get(twkDataUrl + "a/" + auctionurlslug + '.json')
-    if(response.status_code == 200):
-        data = response.json()
-        if(len(data['pageProps']['lots']['results']) ==0):
-          return None
-    
-        twka = data['pageProps']['auction']
-        firstlot = data['pageProps']['lots']['results'][0]
-        city = "Nederland" if  firstlot['location']['city'].lower() == 'online' or firstlot['location']['city'].lower() == "free delivery" else firstlot['location']['city']
-        a = Auction(Auctionbrand.TWK, city, firstlot['location']['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + auctionurlslug, twka['image']['url'], twka['lotCount'] )
-        # print(a);
-        return a
+def getTWKAuction(twka):
+    locations = []
+    cities = []
 
-    return None
+    if(len(twka['collectionDays'])>0):
+      cities = twka['collectionDays']
+    elif(len(twka['deliveryCountries']) >0):
+      cities = [{ 'countryCode': 'nl', 'city':'Nederland'}]
+
+    image = ''
+    if(len(twka['images']) > 0 and twka['images'][0]['url']):
+       image = twka['images'][0]['url']
+
+    for city in cities:
+      if(city['countryCode'].upper() != 'NL'): continue
+      a = Auction(Auctionbrand.TWK, city['city'], city['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + twka['urlSlug'], image, twka['lotCount'], None, len(cities) > 1 )
+      locations.append(a)
+    
+    return locations
