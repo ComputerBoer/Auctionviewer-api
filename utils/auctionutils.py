@@ -46,7 +46,9 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
 
 
     auctions = [*twkauctions, *ovmauctions, *apauctions]
-
+    #filters all auctions for this geonameid
+    auctions = list(filter(lambda a: a.numberoflots > 0 , auctions))
+    
     for auction in auctions:
         auction.geonamelocation = getGeoLocationByCity(auction.city, countrycode)
         
