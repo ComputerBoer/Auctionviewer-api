@@ -51,7 +51,10 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     
     for auction in auctions:
         auction.geonamelocation = getGeoLocationByCity(auction.city, countrycode)
-        
+
+#filters all auctions for this geonameid
+    auctions = list(filter(lambda a: a.numberoflots > 0 , auctions))
+    
     geonameids = map(get_geonameid, auctions)
     uniquegeonameids = (list(set(geonameids)))
 
@@ -59,6 +62,7 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
 
     #loops through the uniques geonameids
     for geoid in uniquegeonameids:
+        
         #filters all auctions for this geonameid
         geoauctions = list(filter(lambda a: get_geonameid(a) == geoid , auctions))
         if(geoauctions):
@@ -81,7 +85,4 @@ def get_geonameid(auction):
     if(auction.geonamelocation):
         return auction.geonamelocation.geonameid
     return None
-
-
-
 
