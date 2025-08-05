@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
 def log(value):
-    print(u' '.join(( str(datetime.now()), value)).encode('utf-8').strip())
-    # print( str(value))
+    value = value.encode('ascii', errors='ignore')
+    value = value.decode()
+    print(str(datetime.now()) + ' ' + value)

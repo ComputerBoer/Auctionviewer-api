@@ -40,6 +40,9 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
 
     geonames = getLocationArray(countrycode)
 
+    city = re.sub(u"(\u2018|\u2019)", "'", city) #replaces single quotes chars by '
+
+
     # log('cityname and city: ' + cityname + " , " + city)
 
     #first tries name with 'gemeente as prefix'
@@ -65,7 +68,6 @@ def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
     if (geo): return geo
 
     #removes everything between () and then removes the leading and trailing spaces;
-    
     log('name before regex ' + city)
     #city = re.sub('/\([^()]*\)/g', '', city)
     city = re.sub("[\(].*?[\)]", "", city)

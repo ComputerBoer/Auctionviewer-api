@@ -1,5 +1,7 @@
 from enum import Enum
+import enum
 from json import JSONEncoder
+import json
 
 class Countrycode(Enum):
     NL = "NL",
@@ -10,6 +12,7 @@ class Auctionbrand(str, Enum):
     NONE = "NONE",
     TWK = "TWK"
     OVM = "OVM"
+    AP = "AP"
 
 
 class GeonameLocation:
@@ -32,7 +35,7 @@ class Maplocation:
         self.auctions = auctions
 
 class Auction: 
-    def __init__(self, auctionbrand: Auctionbrand = Auctionbrand.NONE, city = "", countrycode:Countrycode = Countrycode.NL, name = "", starttime = None, closingtime = None, url = "", imageurl = "", numberoflots = 0, geonamelocation: GeonameLocation =  None):
+    def __init__(self, auctionbrand: Auctionbrand = Auctionbrand.NONE, city = "", countrycode:Countrycode = Countrycode.NL, name = "", starttime = None, closingtime = None, url = "", imageurl = "", numberoflots = 0, geonamelocation: GeonameLocation =  None, multiplelocations = False):
         self.city = city
         self.countrycode = countrycode
         self.name = name
@@ -43,7 +46,34 @@ class Auction:
         self.numberoflots = numberoflots
         self.geonamelocation = geonamelocation
         self.brand = auctionbrand
+        self.multiplelocations = multiplelocations
 
 class JsonEncoder(JSONEncoder):
-    def default(self, o):
-        return o.__dict__
+    # def default(self, o):
+    #     return o.__dict__
+    #try 2
+    def default(self, obj):
+        # Only serialize public, instance-level attributes
+        if hasattr(obj, '__dict__'):
+            return {
+                key: self.serialize(value)
+                for key, value in obj.__dict__.items()
+                if not key.startswith('_')  # skip private/protected
+            }
+        return super().default(obj)
+
+    def serialize(self, value):
+        if isinstance(value, list):
+            return [self.serialize(item) for item in value]
+        elif isinstance(value, dict):
+            return {k: self.serialize(v) for k, v in value.items()}
+        elif isinstance(value, enum.Enum):
+            return value.name  # or value.value
+        elif hasattr(value, '__dict__'):
+            return self.default(value)  # dive into nested object
+        else:
+            try:
+                json.dumps(value)
+                return value
+            except (TypeError, OverflowError):
+                return str(value)
