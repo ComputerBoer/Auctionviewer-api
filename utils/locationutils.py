@@ -33,6 +33,7 @@ def getLocationArray(countrycode: Countrycode):
 
 def getGeoLocationByCity(city = "", countrycode: Countrycode = Countrycode.NL ):
     city = city.strip().lower(); #strips leading and trailing white spaces and makes it lowercase
+    city = city.encode("ascii", errors="ignore").decode()
 
     cityname = city
     if(not "gemeente" in cityname):
