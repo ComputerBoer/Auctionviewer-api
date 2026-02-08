@@ -25,8 +25,8 @@ def getOVMAuctions():
            data = response.json()
            auctions = []
            for result in data['veilingen']:
-               cityname ="Nederland"  if result['isBezorgVeiling'] else result['afgifteAdres']['plaats'] 
-               cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
+                
+              
                startdatetime = result['openingsDatumISO'].replace("T", " ").replace("Z", "")
                enddatetime = result['sluitingsDatumISO'].replace("T", " ").replace("Z", "")
                image = ""
@@ -39,8 +39,22 @@ def getOVMAuctions():
                   else:
                      log("No image found for OVM auction: " + result['naam'])
                
-               a = Auction(Auctionbrand.OVM, cityname,result['land'], result['naam'],startdatetime, enddatetime, str(result['land']).lower() + '/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + image, result['totaalKavels'] )
-               auctions.append(a)
+
+               cityname ="Nederland"      
+               if result['isBezorgVeiling'] == False:
+                        
+                  pickupevents = result['afgifteVeilingEvents']
+                  
+                  for event in pickupevents:
+                     address = event['adres']
+                     cityname = address['plaats'] 
+                     cityname = "Nederland" if cityname is None else cityname #there can be auctions where you have to make an appointment to retrieve the lots
+                     a = Auction(Auctionbrand.OVM, cityname,address['land'], result['naam'],startdatetime, enddatetime, '/nl/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + image, result['totaalKavels'] )
+                     auctions.append(a)
+               else:
+                  a = Auction(Auctionbrand.OVM, cityname,'NL', result['naam'],startdatetime, enddatetime, '/nl/veilingen/' + str(result['id']) + '/kavels', 'images/150x150/' + image, result['totaalKavels'] )
+                  auctions.append(a)
+
            Cache.add(cachename, auctions)
            return auctions
         except Exception as e:
