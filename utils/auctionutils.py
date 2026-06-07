@@ -5,6 +5,7 @@ from models.location import Auction, Auctionbrand, Countrycode, Maplocation, Jso
 from utils.APutils import getAPAuctions
 from utils.OVMutils import getOVMAuctions
 from utils.TWKutils import getTwkAuctions
+from utils.AUCTutils import getAuctivoAuctions
 from utils.locationutils import getGeoLocationByCity
 from utils.helperutils import log
 from datetime import datetime
@@ -25,6 +26,7 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     twkauctions = []
     ovmauctions = []
     apauctions = []
+    auctivoauctions = []
 
     try:
         twkauctions = getTwkAuctions(countrycode)
@@ -41,11 +43,18 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     try:
          apauctions = getAPAuctions() 
     except Exception as e: 
-        log('something went wrong while running the OVM auctions request')
+        log('something went wrong while running the AP auctions request')
+        print_exc(e)
+    
+    try:
+         auctivoauctions = getAuctivoAuctions() 
+    except Exception as e: 
+        log('something went wrong while running the AUCT auctions request')
         print_exc(e)
 
 
-    auctions = [*twkauctions, *ovmauctions, *apauctions]
+
+    auctions = [*twkauctions, *ovmauctions, *apauctions, *auctivoauctions]
     #filters all auctions for this geonameid
     auctions = list(filter(lambda a: a.numberoflots > 0 , auctions))
     

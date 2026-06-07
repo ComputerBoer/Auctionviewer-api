@@ -76,7 +76,18 @@ def getTWKAuction(twka):
     for city in cities:
       if(city['countryCode'] is None ): continue
       if(city['countryCode'].upper() != 'NL'): continue
-      a = Auction(Auctionbrand.TWK, city['city'], city['countryCode'].upper(), twka['name'], datetime.fromtimestamp(twka['startDate']), datetime.fromtimestamp(twka['minEndDate']), '/a/' + twka['urlSlug'], image, twka['lotCount'], None, len(cities) > 1 )
+      a = Auction(
+         Auctionbrand.TWK, 
+         city['city'], 
+         city['countryCode'].upper(), 
+         twka['name'], 
+         datetime.fromtimestamp(twka['startDate']), 
+         datetime.fromtimestamp(twka['minEndDate']), 
+         '/a/' + twka['urlSlug'], 
+         image, twka['lotCount'], 
+         None, 
+         len(cities) > 1 
+         )
       locations.append(a)
     
     return locations
