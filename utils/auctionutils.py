@@ -16,7 +16,7 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     log("should clear chache with cachename: " + str(clearcache) + ", " + cachename)
 
     if(clearcache):
-        res = FileCache.get(cachename, 1)
+        res = FileCache.get(cachename, 0)
     else:
        res = FileCache.get(cachename)
 

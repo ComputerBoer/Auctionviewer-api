@@ -261,9 +261,14 @@ def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
         if pub.get("__typename") != "IncrementalAuctionPreview":
             continue
         
-        log(f"retrieving Auctivo detail GraphQL id: {pub["id"]}")
+        id = pub.get("id", None)
 
-        details = fetch_auction_details(pub["id"], language="NL")
+        log(f"retrieving Auctivo detail GraphQL id: {id}")
+
+        if id == None:
+            continue
+
+        details = fetch_auction_details(id, language="NL")
         if not details:
             continue
 
