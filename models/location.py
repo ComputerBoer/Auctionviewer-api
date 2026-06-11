@@ -13,6 +13,7 @@ class Auctionbrand(str, Enum):
     TWK = "TWK"
     OVM = "OVM"
     AP = "AP"
+    AUCT = "AUCT"
 
 
 class GeonameLocation:

@@ -9,7 +9,7 @@ import requests
 #    print(e)
 
 
-response = requests.get('https://api.auctionviewer.ikbenhenk.nl//v2/refreshauction/NL')
+response = requests.get('https://api.auctionviewer.ikbenhenk.nl/v2/refreshauction/NL')
 if(response.status_code ==200):
   print('ran getauctions request successfull')  
 else:

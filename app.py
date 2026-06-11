@@ -7,7 +7,7 @@ from utils.auctionutils import  getAuctionlocations
 from models.location import JsonEncoder
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:4200","https://auctionviewer.ikbenhenk.nl"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:4200","https://auctionviewer.ikbenhenk.nl", "https://veilingvinden.nl", "https://www.veilingvinden.nl"]}})
 application = app # our hosting requires application in passenger_wsgi
 
 @app.route("/")
