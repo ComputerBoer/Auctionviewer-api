@@ -270,7 +270,7 @@ DETAILS_QUERY = """query QueryIncrementalLots($searchFilter: IncrementalLotSearc
   }
 }"""
 
-def getAuctivoGraphQLPayload(countrycode: Countrycode = Countrycode.NL, date_today: str = None):
+def getAuctivoGraphQLPayload(date_today: str = None):
     if date_today is None:
         date_today = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
@@ -395,7 +395,7 @@ def get_event_image(details):
     return imageurl
 
 def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
-    cachename = f"AuctivoAuctions_{countrycode.name}"
+    cachename = f"AuctivoAuctions_{countrycode}"
     cached = Cache.get(cachename)
     if cached:
         return cached
@@ -403,7 +403,7 @@ def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
     response = requests.post(
         AUCTIVO_GRAPHQL_URL,
         headers=HEADERS,
-        json=getAuctivoGraphQLPayload(countrycode)
+        json=getAuctivoGraphQLPayload()
     )
     if response.status_code != 200:
         log(f"Auctivo GraphQL request failed: {response.status_code}")
