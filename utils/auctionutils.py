@@ -1,4 +1,3 @@
-import requests
 from traceback import print_exc
 from cache import Cache, FileCache
 from models.location import Auction, Auctionbrand, Countrycode, Maplocation, JsonEncoder
@@ -9,6 +8,16 @@ from utils.AUCTutils import getAuctivoAuctions
 from utils.locationutils import getGeoLocationByCity
 from utils.helperutils import log
 from datetime import datetime
+
+
+def safe_call(fn, *args, default=None, **kwargs):
+    try:
+        res = fn(*args, **kwargs)
+        return res if res is not None else (default if default is not None else [])
+    except Exception:
+        log(f"error running {getattr(fn, '__name__', str(fn))}")
+        print_exc()
+        return default if default is not None else []
 
 def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     cachename = 'allauctions_' + countrycode
@@ -28,31 +37,10 @@ def getAuctionlocations(countrycode: Countrycode, clearcache:bool = False):
     apauctions = []
     auctivoauctions = []
 
-    try:
-        twkauctions = getTwkAuctions(countrycode)
-    except Exception as e: 
-        log('something went wrong while running the twk auctions request')
-        print_exc(e)
-    
-    try:
-         ovmauctions = getOVMAuctions() 
-    except Exception as e: 
-        log('something went wrong while running the OVM auctions request')
-        print_exc(e)
-
-    try:
-         apauctions = getAPAuctions() 
-    except Exception as e: 
-        log('something went wrong while running the AP auctions request')
-        print_exc(e)
-    
-    try:
-         auctivoauctions = getAuctivoAuctions() 
-    except Exception as e: 
-        log('something went wrong while running the AUCT auctions request')
-        print_exc(e)
-
-
+    twkauctions = safe_call(getTwkAuctions, countrycode)
+    ovmauctions = safe_call(getOVMAuctions)
+    apauctions = safe_call(getAPAuctions)
+    auctivoauctions = safe_call(getAuctivoAuctions, countrycode)
 
     auctions = [*twkauctions, *ovmauctions, *apauctions, *auctivoauctions]
     #filters all auctions for this geonameid
