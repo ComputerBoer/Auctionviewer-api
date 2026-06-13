@@ -435,7 +435,7 @@ def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
         imageurl = get_event_image(details)
 
         for address in addresses:
-            address_country = address.get("countryCode") or countrycode.name
+            address_country = address.get("countryCode") or countrycode
             try:
                 address_country = Countrycode[address_country.upper()]
             except KeyError:
