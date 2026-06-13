@@ -32,141 +32,243 @@ PREVIEW_QUERY = """query QueryPublicationPreviewsFrontPage($dateToday: AWSDateTi
 }
 """
 
-DETAILS_QUERY = """query GetIncrementalAuction($incrementalAuctionId: ID!, $language: Language!, $isAdminQuery: Boolean) {
-  result: getIncrementalAuction(
-    incrementalAuctionId: $incrementalAuctionId
-    language: $language
-    isAdminQuery: $isAdminQuery
+DETAILS_QUERY = """query QueryIncrementalLots($searchFilter: IncrementalLotSearchFilter!, $pagination: Pagination!, $sort: [IncrementalLotSortOrder!]!) {
+  queryIncrementalLots(
+    pagination: $pagination
+    searchFilter: $searchFilter
+    sort: $sort
   ) {
-    closingOn
-    closingAt
-    createdOn
-    description
-    id
-    publicationType
-    images {
-      imageSizes {
-        c100
-        c500
-        __typename
-      }
+    incrementalLots {
+      closingOn
+      createdOn
+      currentBidAmount
+      userHasFavorite
       description
-      fileId
-      order
-      url
-      isPublic
-      rotation
+      summary
+      displayLanguage
+      id
+      publicationType
+      images {
+        description
+        fileId
+        order
+        url
+        isPublic
+        rotation
+        __typename
+      }
+      publicationLotAttributes {
+        auctionCosts
+        auctionCostsVat
+        bpm
+        marginRule
+        subjectToAcceptance
+        vat
+        advertise
+        __typename
+      }
+      category {
+        externalId
+        name
+        parentId
+        __typename
+      }
+      documentInfo {
+        hasContent
+        rootFolderId
+        __typename
+      }
+      navigation {
+        nextLotId {
+          lotNumber
+          externalId
+          __typename
+        }
+        previousLotId {
+          externalId
+          lotNumber
+          __typename
+        }
+        __typename
+      }
+      lastUpdatedOn
+      lotId
+      lotNumber
+      publicationNumber
+      minimumStartBidAmount
+      projectId
+      publicationId
+      startingOn
+      title
+      isPublished
+      priorityIndex
+      totalFavorites
+      events {
+        retrievalByScheduledDate {
+          events {
+            id
+            forkLiftMaxWeightKilogram
+            endingOn
+            endingOnLocalTime
+            startingOn
+            startingOnLocalTime
+            forkliftAvailable
+            comment
+            commentMultiLanguage {
+              language
+              text
+              __typename
+            }
+            __typename
+          }
+          lotOverride
+          address {
+            id
+            city
+            countryCode
+            houseNumber
+            postalCode
+            houseNumberSuffix
+            street
+            geoLocationUrl
+            __typename
+          }
+          __typename
+        }
+        retrievalByAppointment {
+          events {
+            id
+            forkLiftMaxWeightKilogram
+            endingOn
+            endingOnLocalTime
+            startingOn
+            startingOnLocalTime
+            forkliftAvailable
+            comment
+            commentMultiLanguage {
+              language
+              text
+              __typename
+            }
+            __typename
+          }
+          lotOverride
+          address {
+            id
+            city
+            countryCode
+            houseNumber
+            postalCode
+            houseNumberSuffix
+            street
+            geoLocationUrl
+            __typename
+          }
+          __typename
+        }
+        retrievalByDelivery {
+          events {
+            id
+            forkLiftMaxWeightKilogram
+            endingOn
+            endingOnLocalTime
+            startingOn
+            startingOnLocalTime
+            forkliftAvailable
+            comment
+            commentMultiLanguage {
+              language
+              text
+              __typename
+            }
+            __typename
+          }
+          lotOverride
+          address {
+            id
+            city
+            countryCode
+            houseNumber
+            postalCode
+            houseNumberSuffix
+            street
+            geoLocationUrl
+            __typename
+          }
+          __typename
+        }
+        viewingByAppointment {
+          events {
+            id
+            forkLiftMaxWeightKilogram
+            endingOn
+            endingOnLocalTime
+            startingOn
+            startingOnLocalTime
+            forkliftAvailable
+            comment
+            commentMultiLanguage {
+              language
+              text
+              __typename
+            }
+            __typename
+          }
+          lotOverride
+          address {
+            id
+            city
+            countryCode
+            houseNumber
+            postalCode
+            houseNumberSuffix
+            street
+            geoLocationUrl
+            __typename
+          }
+          __typename
+        }
+        viewingByScheduledDate {
+          events {
+            id
+            forkLiftMaxWeightKilogram
+            endingOn
+            endingOnLocalTime
+            startingOn
+            startingOnLocalTime
+            forkliftAvailable
+            comment
+            commentMultiLanguage {
+              language
+              text
+              __typename
+            }
+            __typename
+          }
+          lotOverride
+          address {
+            id
+            city
+            countryCode
+            houseNumber
+            postalCode
+            houseNumberSuffix
+            street
+            geoLocationUrl
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
       __typename
     }
-    publishedChannels
-    publishedLanguages
-    displayLanguage
-    visibleOn
-    title
-    startingOn
-    projectId
-    publicationNumber
-    lastUpdatedOn
-    isPublished
-    lotCount
-    summary
-    events {
-      retrievalByScheduledDate {
-        events {
-          id
-          forkLiftMaxWeightKilogram
-          endingOn
-          endingOnLocalTime
-          startingOn
-          startingOnLocalTime
-          forkliftAvailable
-          comment
-          commentMultiLanguage {
-            language
-            text
-            __typename
-          }
-          __typename
-        }
-        address {
-          id
-          city
-          countryCode
-          houseNumber
-          postalCode
-          houseNumberSuffix
-          street
-          geoLocationUrl
-          __typename
-        }
-        __typename
-      }
-      retrievalByAppointment {
-        events {
-          id
-          forkLiftMaxWeightKilogram
-          endingOn
-          endingOnLocalTime
-          startingOn
-          startingOnLocalTime
-          forkliftAvailable
-          comment
-          commentMultiLanguage {
-            language
-            text
-            __typename
-          }
-          __typename
-        }
-        address {
-          id
-          city
-          countryCode
-          houseNumber
-          postalCode
-          houseNumberSuffix
-          street
-          geoLocationUrl
-          __typename
-        }
-        __typename
-      }
-      retrievalByDelivery {
-        events {
-          id
-          forkLiftMaxWeightKilogram
-          endingOn
-          endingOnLocalTime
-          startingOn
-          startingOnLocalTime
-          forkliftAvailable
-          comment
-          commentMultiLanguage {
-            language
-            text
-            __typename
-          }
-          __typename
-        }
-        address {
-          id
-          city
-          countryCode
-          houseNumber
-          postalCode
-          houseNumberSuffix
-          street
-          geoLocationUrl
-          __typename
-        }
-        __typename
-      }
-      __typename
-    }
+    paginatedPageNumber
+    paginatedPageSize
+    paginatedTotalResults
     __typename
   }
-}
-"""
+}"""
 
 def getAuctivoGraphQLPayload(countrycode: Countrycode = Countrycode.NL, date_today: str = None):
     if date_today is None:
@@ -185,11 +287,16 @@ def getAuctivoGraphQLPayload(countrycode: Countrycode = Countrycode.NL, date_tod
 
 def getAuctivoIncrementalAuctionPayload(incrementalAuctionId: str, language: str = "NL", isAdminQuery: bool = False):
     return {
-        "operationName": "GetIncrementalAuction",
+        "operationName": "QueryIncrementalLots",
         "variables": {
-            "incrementalAuctionId": incrementalAuctionId,
-            "language": language,
-            "isAdminQuery": isAdminQuery
+            "searchFilter": {
+                "categories": [],
+                "language": language,
+                "publicationId": incrementalAuctionId,
+                "isAdminQuery": isAdminQuery
+            },
+            "pagination": {"itemsPerPage": 60, "page": 1},
+            "sort": {"direction": "ASCENDING", "sortField": "LOT_NUMBER"}
         },
         "query": DETAILS_QUERY
     }
@@ -203,7 +310,37 @@ def fetch_auction_details(auction_id: str, language: str = "NL"):
     if response.status_code != 200:
         log(f"Auctivo detail GraphQL request failed: {response.status_code}")
         return {}
-    return response.json().get("data", {}).get("result", {})
+
+    data = response.json().get("data", {}).get("queryIncrementalLots", {})
+    lots = data.get("incrementalLots", []) or []
+    if not lots:
+        return {}
+
+    # pick first lot for top-level fields and collect first available images
+    first_lot = lots[0]
+    images = []
+    for lot in lots:
+        imgs = lot.get("images") or []
+        if imgs:
+            images = imgs
+            break
+
+    # aggregate events across lots into lists per event type (keeps shape expected by extract_event_addresses)
+    aggregated_events = {}
+    for lot in lots:
+        events = lot.get("events") or {}
+        for name in EVENT_TYPES:
+            block = events.get(name)
+            if not block:
+                continue
+            aggregated_events.setdefault(name, []).append(block)
+
+    return {
+        "images": images,
+        "events": aggregated_events,
+        "startingOn": first_lot.get("startingOn"),
+        "closingOn": first_lot.get("closingOn")
+    }
 
 EVENT_TYPES = [
     "retrievalByScheduledDate",
@@ -219,9 +356,16 @@ def extract_event_addresses(publication):
         block = events.get(name)
         if not block:
             continue
-        if isinstance(block, dict):
-            block = [block]
-        for item in block:
+        # if isinstance(block, dict):
+        #     block = [block]
+
+        log(f"retrieving data from block: {block}")
+        for parentitem in block:
+            item = parentitem
+            if isinstance(block, list):
+              item = parentitem[0]
+              
+            log(f"retrieving address from: {item}")
             address = item.get("address") or {}
             city = address.get("city")
             if not city:
@@ -238,6 +382,21 @@ def extract_event_addresses(publication):
             })
 
     return addresses
+
+def get_event_image(details):
+    imageurl = ""
+    images = details.get("images") or []
+    for img in images:
+        if not img or not isinstance(img, dict):
+            continue
+        url = img.get("url")
+        if not url:
+            image_sizes = img.get("imageSizes") or {}
+            url = image_sizes.get("c500") or image_sizes.get("c100")
+        if url:
+            imageurl = url
+            break
+    return imageurl
 
 def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
     cachename = f"AuctivoAuctions_{countrycode.name}"
@@ -277,10 +436,7 @@ def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
             continue
 
         multiple_locations = len(addresses) > 1
-        imageurl = ""
-        first_image = pub.get("firstImage")
-        if first_image and first_image.get("url"):
-            imageurl = first_image["url"]
+        imageurl = get_event_image(details)
 
         for address in addresses:
             address_country = address.get("countryCode") or countrycode.name
