@@ -356,16 +356,12 @@ def extract_event_addresses(publication):
         block = events.get(name)
         if not block:
             continue
-        # if isinstance(block, dict):
-        #     block = [block]
 
-        log(f"retrieving data from block: {block}")
         for parentitem in block:
             item = parentitem
             if isinstance(block, list):
               item = parentitem[0]
-              
-            log(f"retrieving address from: {item}")
+
             address = item.get("address") or {}
             city = address.get("city")
             if not city:
