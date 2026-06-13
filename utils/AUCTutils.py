@@ -448,7 +448,7 @@ def getAuctivoAuctions(countrycode: Countrycode = Countrycode.NL):
                 pub.get("title", ""),
                 details.get("startingOn", None),
                 details.get("closingOn", None),
-                "/auctivo/" + str(pub.get("id", "")),
+                "/auction/" + str(pub.get("id", "")),
                 imageurl,
                 pub.get("lotCount", 0),
                 None,
