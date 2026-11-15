@@ -4,61 +4,118 @@ import re
 import requests
 
 from cache import Cache
-from models.location import Auction, Auctionbrand
+from models.location import Auction, Auctionbrand, Countrycode, JsonEncoder
 from utils.helperutils import log
 
 
-def getTWKUrl():
-    response = requests.get('https://www.troostwijkauctions.com/')
-    if(response.status_code ==200):
-      buildid = re.search(r'"buildId":"([^"]*)', response.text, re.MULTILINE )
-      twkDataUrl = 'https://www.troostwijkauctions.com/_next/data/' + str(buildid[1]) + '/nl/'
-      log('buildid: ' + str(buildid[1]))
-      log('twkDataUrl: ' + twkDataUrl)
-      return twkDataUrl
+TROOSTWIJK_GRAPHQL_URL = "https://storefront.tbauctions.com/storefront/graphql"
 
-    return None
+ALLAUCTIONS_QUERY = """query AllAuctions(
+    $request:AllAuctionsInput!
+    $platform:Platform!
+    ){
+        allAuctions:allAuctionsV2(
+            request:$request 
+            platform:$platform
+        ){
+            results{
+            ...listingAuction
+            }
+            totalSize 
+            pageNumber
+        }
+    }fragment listingAuction on Auction{
+        id 
+        displayId 
+        name 
+        urlSlug 
+        directSaleType 
+        biddingStatus 
+        endDate 
+        startDate 
+        images{
+            url 
+            alt 
+            order
+        }
+        lotCount 
+        collectionDays{
+            countryCode 
+            city
+        }
+        deliveryCountries 
+        url3dTour 
+        minEndDate 
+        image{
+            url 
+            alt
+        }
+    }"""
+
+def getTWKGraphQLPayload(pagenum = 1):
+    # 
+
+    return {
+        # "operationName": "QueryPublicationPreviewsFrontPage",
+        "variables": {
+          "request":{
+            "locale":"nl",
+            "biddingStatuses":["BIDDING_OPEN","BIDDING_NOT_YET_OPENED"],
+            "sortBy":"END_DATE_ASC",
+            "pageNumber":pagenum,
+            "pageSize":50,
+            "facets":[{
+              "identifier":"countries",
+              "values":["nl"]
+            }],
+            "rangeFacets":[]
+          },
+          "platform":"TWK"
+        },
+        "query": ALLAUCTIONS_QUERY
+    }
 
 
-def getTwkAuctions(countrycode):
+
+def getTwkAuctions(countrycode: Countrycode = Countrycode.NL):
     cachename = 'TwkAuctions_'+ countrycode
     res = Cache.get(cachename)
     if(res):
       return res
 
-    # buildidresponse = requests.get('https://www.troostwijkauctions.com/')
-    twkDataUrl = getTWKUrl()
-
-    if(twkDataUrl is None):
+    response = requests.post( TROOSTWIJK_GRAPHQL_URL, json=getTWKGraphQLPayload(1) ) # headers=HEADERS,
+    if response.status_code != 200:
+        log(f"TWK GraphQL request failed: {response.status_code}")
         return []
 
-    response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode)
+    log('Got Twk Auctions')
+    auctions = []
+    
+    totalAuctionCount = response.json().get('data', {}).get('allAuctions', {}).get('totalSize')
+    pages = math.ceil(totalAuctionCount / 50)
 
-    if(response.status_code ==200):
-        log('Got Twk Auctions')
-        data = response.json()
-        auctions = []
-        
-        totalAuctionCount = data['pageProps']['totalSize'];
-        pages = math.ceil(totalAuctionCount / data['pageProps']['pageSize'])
-        # for result in data['pageProps']['auctionList']:
-        
-        for i in range(1,pages,1):
-          log("getting page " + str(i) + ' of ' + str(pages))
-          if(i > 1):
-              response = requests.get(twkDataUrl + "auctions.json?countries=" + countrycode + "&page=" + str(i))
-              data = response.json()
-          
-          for twka in data['pageProps']['listData']:
-            # print(twka['urlSlug'])
-            auctionlocations = getTWKAuction(twka)
-            for auction in auctionlocations:
-              auctions.append(auction)
+    auctions = iterateAuctions(response.json().get('data', {}).get('allAuctions', {}).get('results', []))
+    
+    for pagenum in range(2,pages,1):
+      log("getting page " + str(pagenum) + ' of ' + str(pages))
 
-        Cache.add(cachename, auctions)
+      response = requests.post( TROOSTWIJK_GRAPHQL_URL, json=getTWKGraphQLPayload(pagenum) ) # headers=HEADERS,
+      if response.status_code != 200:
+        log(f"TWK GraphQL request failed: {response.status_code}")
+        continue
 
-        return auctions
-    return []
+      auctions = auctions + iterateAuctions(response.json().get('data', {}).get('allAuctions', {}).get('results', []))
+
+    Cache.add(cachename, auctions)
+
+    return auctions
+
+def iterateAuctions(auctionresults):
+  auctions = []
+  for twka in auctionresults:
+    auctions = auctions +getTWKAuction(twka)
+  return auctions
+      
 
 def getTWKAuction(twka):
     locations = []
@@ -76,6 +133,7 @@ def getTWKAuction(twka):
     for city in cities:
       if(city['countryCode'] is None ): continue
       if(city['countryCode'].upper() != 'NL'): continue
+      
       a = Auction(
          Auctionbrand.TWK, 
          city['city'], 
@@ -84,7 +142,8 @@ def getTWKAuction(twka):
          datetime.fromtimestamp(twka['startDate']), 
          datetime.fromtimestamp(twka['minEndDate']), 
          '/a/' + twka['urlSlug'], 
-         image, twka['lotCount'], 
+         image, 
+         twka.get('lotCount', 0), 
          None, 
          len(cities) > 1 
          )
